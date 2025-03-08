@@ -1,3 +1,10 @@
+# Compiled codes
+/lib
+
+# Runtime data
+/config.yml
+/data
+
 # Logs
 logs
 *.log

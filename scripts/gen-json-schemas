@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const { resolve } = require("node:path");
+const { writeFileSync } = require("node:fs");
+const { zodToJsonSchema } = require("zod-to-json-schema");
+
+const schemas = new Map(
+    [
+        ["config", require("../lib/config").Config],
+    ]);
+
+for (const [key, schema] of schemas)
+{
+    const path = resolve(__dirname, `../schemas/${key}.schema.json`);
+
+    console.info(`Generating schema: ${path}`);
+    writeFileSync(path, JSON.stringify(zodToJsonSchema(schema), null, 4));
+}

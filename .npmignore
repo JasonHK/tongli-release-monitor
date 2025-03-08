@@ -1,0 +1,12 @@
+# Source codes
+/src
+
+# Runtime data
+/config.yml
+/data
+
+# Scripts
+/scripts
+
+# Docker
+Dockerfile

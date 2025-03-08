@@ -1,0 +1,53 @@
+{
+    "compilerOptions": {
+        // Project Options
+        "downlevelIteration": true,
+        "sourceMap": true,
+        "target": "ES2024",
+        "module": "CommonJS",
+
+        // Strict Checks
+        "alwaysStrict": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictBindCallApply": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+
+        // Module Resolution
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "moduleResolution": "Node",
+
+        // Source Maps
+
+        // Linter Checks
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+
+        // Experimental
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+
+        // Command Line
+
+        // Watch Options
+
+        // Advanced
+        "forceConsistentCasingInFileNames": true,
+        "newLine": "lf",
+        "resolveJsonModule": true,
+        "useDefineForClassFields": true,
+        
+        //
+        "baseUrl": "../",
+        "rootDir": "../src",
+        "outDir": "../lib",
+        "plugins": [
+            { "transform": "typescript-transform-paths" },
+            { "transform": "typescript-transform-paths", "afterDeclarations": true },
+            { "transform": "ts-nameof", "type": "raw" }
+        ],
+    },
+    "include": ["../src/**/*.ts"]
+}

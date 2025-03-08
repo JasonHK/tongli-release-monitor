@@ -1,0 +1,40 @@
+{
+  "name": "tongli-release-monitor",
+  "description": "Monitor new books published by Tong Li Publishing.",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "author": "Jason Kwok <hello@jasonhk.dev>",
+  "homepage": "https://github.com/JasonHK/tongli-release-monitor#readme",
+  "keywords": [
+    "monitor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasonHK/tongli-release-monitor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JasonHK/tongli-release-monitor/issues"
+  },
+  "scripts": {
+    "start": "./bin/tongli-release-monitor",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": "bin/index.js",
+  "dependencies": {
+    "arg": "^5.0.2",
+    "jsdom": "^26.0.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "styleless-innertext": "^1.1.5",
+    "toad-scheduler": "^3.0.1",
+    "yaml": "^2.7.0",
+    "zod": "^3.24.2",
+    "zod-validation-error": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.7",
+    "@types/node-telegram-bot-api": "^0.64.7",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.2",
+    "zod-to-json-schema": "^3.24.3"
+  }
+}

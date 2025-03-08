@@ -1,0 +1,70 @@
+{
+    "type": "object",
+    "properties": {
+        "notify": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "service": {
+                                "type": "string",
+                                "const": "telegram"
+                            },
+                            "bot_token": {
+                                "type": "string"
+                            },
+                            "chat_ids": {
+                                "type": "array",
+                                "items": {
+                                    "anyOf": [
+                                        {
+                                            "anyOf": [
+                                                {
+                                                    "type": "string",
+                                                    "pattern": "^\\@"
+                                                },
+                                                {
+                                                    "type": "integer"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "chat_id": {
+                                                    "$ref": "#/properties/notify/items/anyOf/0/properties/chat_ids/items/anyOf/0"
+                                                },
+                                                "message_thread_id": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "required": [
+                                                "chat_id",
+                                                "message_thread_id"
+                                            ],
+                                            "additionalProperties": false
+                                        }
+                                    ]
+                                },
+                                "minItems": 1
+                            }
+                        },
+                        "required": [
+                            "service",
+                            "bot_token",
+                            "chat_ids"
+                        ],
+                        "additionalProperties": false
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "notify"
+    ],
+    "additionalProperties": false,
+    "$schema": "http://json-schema.org/draft-07/schema#"
+}
