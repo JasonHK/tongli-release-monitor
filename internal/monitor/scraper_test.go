@@ -16,7 +16,7 @@ func TestGetReleaseBooks(t *testing.T) {
 	articleExpected := &ReleaseArticle{
 		Title: "6/5《百合大暴走～超心動事件發生中！～》第1集《佐橋小弟的妖怪日常》第1集，新作登場！",
 		Url:   "https://www.tongli.com.tw/TNews_View.aspx?Tid=20260605083824",
-		Books: []ReleaseCategory{
+		Categories: []ReleaseCategory{
 			{
 				Name: "新書",
 				Books: []string{

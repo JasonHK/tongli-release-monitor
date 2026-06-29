@@ -18,14 +18,14 @@ var (
 )
 
 type ReleaseArticle struct {
-	Title string
-	Url   string
-	Books []ReleaseCategory
+	Title      string            `json:"title"`
+	Url        string            `json:"url"`
+	Categories []ReleaseCategory `json:"categories"`
 }
 
 type ReleaseCategory struct {
-	Name  string
-	Books []string
+	Name  string   `json:"name"`
+	Books []string `json:"books"`
 }
 
 func GetLatestReleaseArticle() (article *ReleaseArticle, err error) {
@@ -92,7 +92,7 @@ func GetReleaseBooks(article *ReleaseArticle) (err error) {
 		return ErrElementNotFound
 	}
 
-	books := []ReleaseCategory{}
+	categories := []ReleaseCategory{}
 	categoryIndex := -1
 
 	var contentErr error
@@ -110,11 +110,11 @@ func GetReleaseBooks(article *ReleaseArticle) (err error) {
 					return true
 				}
 
-				books = append(books, ReleaseCategory{
+				categories = append(categories, ReleaseCategory{
 					Name:  categoryName,
 					Books: []string{},
 				})
-				categoryIndex = len(books) - 1
+				categoryIndex = len(categories) - 1
 
 			case "p":
 				if categoryIndex == -1 {
@@ -129,7 +129,7 @@ func GetReleaseBooks(article *ReleaseArticle) (err error) {
 
 					title := strings.TrimSpace(child.Text())
 					if title != "" {
-						books[categoryIndex].Books = append(books[categoryIndex].Books, title)
+						categories[categoryIndex].Books = append(categories[categoryIndex].Books, title)
 					}
 				})
 			}
@@ -141,6 +141,6 @@ func GetReleaseBooks(article *ReleaseArticle) (err error) {
 		return contentErr
 	}
 
-	article.Books = books
+	article.Categories = categories
 	return nil
 }
