@@ -18,17 +18,28 @@ var (
 )
 
 type ReleaseArticle struct {
-	Title      string            `json:"title"`
-	Url        string            `json:"url"`
+	Title      string            `json:"title" validate:"required"`
+	Url        string            `json:"url" validate:"required,http_url"`
 	Categories []ReleaseCategory `json:"categories"`
 }
 
 type ReleaseCategory struct {
-	Name  string   `json:"name"`
-	Books []string `json:"books"`
+	Name  string   `json:"name" validate:"required"`
+	Books []string `json:"books" validate:"required"`
 }
 
-func GetLatestReleaseArticle() (article *ReleaseArticle, err error) {
+type scraper interface {
+	getLatestReleaseArticle() (*ReleaseArticle, error)
+	getReleaseBooks(*ReleaseArticle) error
+}
+
+type Scraper struct{}
+
+func newScraper() *Scraper {
+	return &Scraper{}
+}
+
+func (s *Scraper) getLatestReleaseArticle() (article *ReleaseArticle, err error) {
 	res, err := http.Get("https://www.tongli.com.tw/TNews_List.aspx?Type=0&Page=1")
 	if err != nil {
 		return nil, err
@@ -72,7 +83,7 @@ func GetLatestReleaseArticle() (article *ReleaseArticle, err error) {
 	}, nil
 }
 
-func GetReleaseBooks(article *ReleaseArticle) (err error) {
+func (s *Scraper) getReleaseBooks(article *ReleaseArticle) (err error) {
 	res, err := http.Get(article.Url)
 	if err != nil {
 		return err

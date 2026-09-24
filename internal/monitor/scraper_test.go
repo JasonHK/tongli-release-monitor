@@ -7,7 +7,8 @@ import (
 )
 
 func TestGetLatestReleaseArticle(t *testing.T) {
-	article, err := GetLatestReleaseArticle()
+	scraper := newScraper()
+	article, err := scraper.getLatestReleaseArticle()
 	assert.NotNil(t, article)
 	assert.Nil(t, err)
 }
@@ -54,7 +55,8 @@ func TestGetReleaseBooks(t *testing.T) {
 		Url:   "https://www.tongli.com.tw/TNews_View.aspx?Tid=20260605083824",
 	}
 
-	GetReleaseBooks(article)
+	scraper := newScraper()
+	scraper.getReleaseBooks(article)
 	assert.EqualExportedValues(t, articleExpected, article)
 
 }
