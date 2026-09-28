@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -29,29 +30,37 @@ type ReleaseCategory struct {
 }
 
 type scraper interface {
-	getLatestReleaseArticle() (*ReleaseArticle, error)
-	getReleaseBooks(*ReleaseArticle) error
+	fetchDocument(url string) (doc *goquery.Document, finalUrl *url.URL, err error)
+	getLatestReleaseArticle() (article *ReleaseArticle, err error)
+	getReleaseBooks(article *ReleaseArticle) (err error)
 }
 
-type Scraper struct{}
+type defaultScraper struct{}
 
-func newScraper() *Scraper {
-	return &Scraper{}
-}
-
-func (s *Scraper) getLatestReleaseArticle() (article *ReleaseArticle, err error) {
-	res, err := http.Get("https://www.tongli.com.tw/TNews_List.aspx?Type=0&Page=1")
+func (s *defaultScraper) fetchDocument(url string) (doc *goquery.Document, finalUrl *url.URL, err error) {
+	res, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return nil, nil, fmt.Errorf("failed to fetch %q: %w", url, err)
+	}
+
+	finalUrl = res.Request.URL
+	if res.StatusCode != http.StatusOK {
+		return nil, finalUrl, ErrStatusNotOK
 	}
 	defer res.Body.Close()
-	if res.StatusCode != http.StatusOK {
-		return nil, ErrStatusNotOK
+
+	doc, err = goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read body of %q: %w", url, err)
 	}
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+	return doc, finalUrl, err
+}
+
+func (s *defaultScraper) getLatestReleaseArticle() (article *ReleaseArticle, err error) {
+	doc, finalUrl, err := s.fetchDocument("https://www.tongli.com.tw/TNews_List.aspx?Type=0&Page=1")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch articles list: %w", err)
 	}
 
 	articleSel := doc.FindMatcher(goquery.Single(".news_list li:first-child"))
@@ -73,27 +82,18 @@ func (s *Scraper) getLatestReleaseArticle() (article *ReleaseArticle, err error)
 
 	linkRef, err := url.Parse(link)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid url %q: %w", link, err)
 	}
 
-	link = res.Request.URL.ResolveReference(linkRef).String()
+	link = finalUrl.ResolveReference(linkRef).String()
 	return &ReleaseArticle{
 		Title: title,
 		Url:   link,
 	}, nil
 }
 
-func (s *Scraper) getReleaseBooks(article *ReleaseArticle) (err error) {
-	res, err := http.Get(article.Url)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-	if res.StatusCode != 200 {
-		return ErrStatusNotOK
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
+func (s *defaultScraper) getReleaseBooks(article *ReleaseArticle) (err error) {
+	doc, _, err := s.fetchDocument(article.Url)
 	if err != nil {
 		return err
 	}
@@ -154,4 +154,8 @@ func (s *Scraper) getReleaseBooks(article *ReleaseArticle) (err error) {
 
 	article.Categories = categories
 	return nil
+}
+
+func NewScraper() scraper {
+	return &defaultScraper{}
 }
